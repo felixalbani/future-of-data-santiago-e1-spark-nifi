@@ -13,23 +13,33 @@ TOPIC="tweets"
 export DEPLOY_DIR=$BASE_DIR/deploy
 export SOURCE_PATH=$BASE_DIR/src
 
-if [ -d $DEPLOY_DIR ]; then
+if [ ! -d $DEPLOY_DIR ]; then
   mkdir -p $DEPLOY_DIR
 fi
 
 conda list --export > $DEPLOY_DIR/requirements_conda.txt
 
 if [ ! -f $DEPLOY_DIR/model_data.zip ]; then
-    zip -R $DEPLOY_DIR/model_data.zip ../keras-yolo3/model_data/*
+    zip -r -j $DEPLOY_DIR/model_data.zip $BASE_DIR/keras-yolo3/model_data/*
 fi
 
 if [ ! -f $DEPLOY_DIR/yolo3.zip ]; then
-    zip -R $DEPLOY_DIR/yolo3.zip ../keras-yolo3/yolo3/*
+    cd $BASE_DIR/keras-yolo3
+    zip -r $DEPLOY_DIR/yolo3.zip yolo3/*
 fi
 
 if [ ! -f $DEPLOY_DIR/font.zip ]; then
-    zip -R $DEPLOY_DIR/font.zip ../keras-yolo3/font/*
+    zip -r -j $DEPLOY_DIR/font.zip $BASE_DIR/keras-yolo3/font/*
 fi
+
+# Copy new source code to deploy dir
+cp -rf $SOURCE_PATH/* $DEPLOY_DIR/
+cp -rf $BASE_DIR/keras-yolo3/model_data $DEPLOY_DIR/
+cp -rf $BASE_DIR/keras-yolo3/font $DEPLOY_DIR/
+
+
+
+cd $DEPLOY_DIR
 
 /usr/hdp/current/spark2-client/bin/spark-submit --master local --deploy-mode client \
 --packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.2.0,com.hortonworks:shc-core:1.1.1-2.1-s_2.11 \
@@ -38,9 +48,10 @@ fi
 --conf spark.streaming.kafka.maxRatePerPartition=1 \
 --conf spark.pyspark.virtualenv.enabled=true \
 --conf spark.pyspark.virtualenv.type=conda \
---conf spark.pyspark.virtualenv.requirements=$DEPLOY_DIR/requirements_conda.txt \
+--conf spark.pyspark.virtualenv.requirements=requirements_conda.txt \
 --conf spark.pyspark.virtualenv.bin.path=$CONDA_PATH \
---archives $DEPLOY_DIR/model_data.zip#model_data,$DEPLOY_DIR/font.zip#font \
---py-files yolo3.zip,$SOURCE_PATH/yolo.py,$SOURCE_PATH/twitter.py,$SOURCE_PATH/twitter_secret.py,$SOURCE_PATH/helper.py \
+--archives model_data.zip#model_data,font.zip#font \
+--py-files yolo3.zip,yolo.py,twitter.py,twitter_secret.py,helper.py \
 main.py \
 $BROKER_LIST $TOPIC
+

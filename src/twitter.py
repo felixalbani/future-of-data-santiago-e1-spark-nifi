@@ -9,23 +9,23 @@ from PIL import Image
 
 
 def process_tweet(tweet, yolo):
-    logging.info("-==============================-")
-    logging.info("Start to process tweet id: " +
+    print("-==============================-")
+    print("Start to process tweet id: " +
                  tweet["id_str"] + " user: " + tweet["user"]["screen_name"])
 
     # Download image
     response = requests.get(tweet['entities']['media'][0]['media_url'])
     image = Image.open(io.BytesIO(response.content))
 
-    logging.info(" [+] Image downloaded")
+    print(" [+] Image downloaded")
 
     # Process image using yolo
     source_img = image.copy()
     result_image, result_meta = yolo.detect_image(image)
 
-    logging.info(result_meta)
-    logging.info(" [+] Image processed")
-    logging.info("-==============================-")
+    print(result_meta)
+    print(" [+] Image processed")
+    print("-==============================-")
     return source_img, result_image, result_meta
 
 # Send a reply to status with image

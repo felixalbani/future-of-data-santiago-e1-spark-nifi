@@ -1,10 +1,13 @@
 from __future__ import print_function
-
 import sys
+import os
+
+#if os.path.exists('yolo3.zip'):
+#    sys.path.insert(0, 'yolo3.zip')
+
 import traceback
 import json
 import requests
-import os
 import io
 import logging
 
@@ -20,14 +23,13 @@ import helper
 from yolo import YOLO
 from PIL import Image
 
-if os.path.exists('yolo3.zip'):
-    sys.path.insert(0, 'yolo3.zip')
-
 # Batch interval default 5 seconds
 BATCH_INTERVAL = 5
 
 MODEL_DATA_DIR = "model_data"
 FONT_DIR = "font"
+
+#logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def map_tweet(record):
@@ -36,10 +38,10 @@ def map_tweet(record):
         tweet = json.loads(record[1])
 
         # process tweet
-        source_img, result_image, result_meta = process_tweet(tweet, yolo)
+        source_img, result_image, result_meta = twitter.process_tweet(tweet, yolo)
 
         return (str(tweet["id"]), "twitter", tweet["user"]["screen_name"],
-                tweet["text"], to_bytearray(source_img), to_bytearray(result_image))
+                tweet["text"], helper.to_bytearray(source_img), helper.to_bytearray(result_image))
     except:
         print("Unexpected error:", sys.exc_info()[0])
         traceback.print_exc(file=sys.stdout)
