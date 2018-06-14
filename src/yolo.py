@@ -140,14 +140,14 @@ class YOLO(object, metaclass=Singleton):
             label_size = draw.textsize(label, font)
 
             top, left, bottom, right = box
-            top = max(0, np.floor(top + 0.5).astype('int32'))
-            left = max(0, np.floor(left + 0.5).astype('int32'))
-            bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
-            right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
+            top = max(0, np.floor(top + 0.5).astype('int32').item())
+            left = max(0, np.floor(left + 0.5).astype('int32').item())
+            bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32').item())
+            right = min(image.size[0], np.floor(right + 0.5).astype('int32').item())
             logging.info(label, (left, top), (right, bottom))
 
             meta.append((predicted_class, score.item(),
-                         (left.item(), top.item()), (right.item(), bottom.item())))
+                         (left, top), (right, bottom)))
 
             if top - label_size[1] >= 0:
                 text_origin = np.array([left, top - label_size[1]])
