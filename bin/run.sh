@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source set-env.sh
+
 #export PYSPARK_PYTHON=/opt/anaconda3/bin/python3
 #export PYSPARK_DRIVER_PYTHON=/opt/anaconda3/bin/python3
 export HDP_VERSION='2.6.4.0-91'
@@ -8,8 +10,12 @@ export CONDA_PATH=/opt/anaconda3/bin/conda
 BROKER_LIST="c34-node3.squadron-labs.com:6667,c34-node4.squadron-labs.com:6667,c34-node2.squadron-labs.com:6667"
 TOPIC="tweets"
 
-export DEPLOY_DIR=../deploy
-export SOURCE_PATH=../src
+export DEPLOY_DIR=$BASE_DIR/deploy
+export SOURCE_PATH=$BASE_DIR/src
+
+if [ -d $DEPLOY_DIR ]; then
+  mkdir -p $DEPLOY_DIR
+fi
 
 conda list --export > $DEPLOY_DIR/requirements_conda.txt
 
