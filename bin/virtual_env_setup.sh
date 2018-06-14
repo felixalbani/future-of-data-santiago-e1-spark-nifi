@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=/opt/anaconda3/bin:$PATH
+source set-env.sh
 
 conda create --prefix ../conda_virutal_env python=3.6
 
