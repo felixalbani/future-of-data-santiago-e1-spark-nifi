@@ -147,7 +147,7 @@ class YOLO(object, metaclass=Singleton):
             logging.info(label, (left, top), (right, bottom))
 
             meta.append((predicted_class, score.item(),
-                         (left, top), (right, bottom)))
+                         (left.item(), top.item()), (right.item(), bottom.item())))
 
             if top - label_size[1] >= 0:
                 text_origin = np.array([left, top - label_size[1]])
