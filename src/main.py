@@ -52,8 +52,10 @@ def map_scores(record):
     rmeta = record[6]
     key = record[0]
     row = []
+    i=0
     for m in rmeta:
-        row.append((key, m[0],m[1],m[2][0],m[2][1],m[3][0],m[3][1]))
+        row.append((key+'-'+str(i), key, m[0],m[1],m[2][0],m[2][1],m[3][0],m[3][1]))
+        i=i+1
     return row
 
 def save_meetup_to_hbase(result):
@@ -78,7 +80,7 @@ def save_meetup_to_hbase(result):
 
 def save_meetup_tags_to_hbase(result):
     if(not result.isEmpty()):
-        schema = ['key', 'class', 'score', 'x1',
+        schema = ['key', 'meetup_key', 'class', 'score', 'x1',
                   'y1', 'x2', 'y2']
         df = result.toDF(schema)
         # df.printSchema()
@@ -87,8 +89,9 @@ def save_meetup_tags_to_hbase(result):
                               "rowkey": "key",
                               "columns":
                               {"key": {"cf": "rowkey", "col": "key", "type": "string"},
-                               "class": {"cf": "cf", "col": "source", "type": "string"},
-                               "score": {"cf": "cf", "col": "user", "type": "float"},
+                               "meetup_key": {"cf": "cf", "col": "meetup_key", "type": "string"},
+                               "class": {"cf": "cf", "col": "class", "type": "string"},
+                               "score": {"cf": "cf", "col": "score", "type": "float"},
                                "x1": {"cf": "cf", "col": "x1", "type": "int"},
                                "y1": {"cf": "cf", "col": "y1", "type": "int"},
                                "x2": {"cf": "cf", "col": "x2", "type": "int"},
@@ -114,16 +117,16 @@ if __name__ == "__main__":
 
     ssc = StreamingContext(sparkSession.sparkContext, BATCH_INTERVAL)
 
-    #kvs = KafkaUtils.createDirectStream(ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": "smallest"})
-    kvs = KafkaUtils.createDirectStream(
-        ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": "largest"})
+    kvs = KafkaUtils.createDirectStream(ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": "smallest"})
+    #kvs = KafkaUtils.createDirectStream(
+    #    ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": "largest"})
 
     result = kvs.map(lambda record: map_tweet(record)).filter(
         lambda record: record[0] is not None).cache()
 
     scores = result.flatMap(lambda record: map_scores(record)).foreachRDD(lambda rdd: save_meetup_tags_to_hbase(rdd))
 
-    result.filter(lambda r: (r[0],r[1],r[2],r[3],r[4],r[5])).foreachRDD(lambda rdd: save_meetup_to_hbase(rdd))
+    result.map(lambda r: (r[0],r[1],r[2],r[3],r[4],r[5])).foreachRDD(lambda rdd: save_meetup_to_hbase(rdd))
 
     # create_dir_if_not_exists("result")
     #r_file_name = "result/"+tweet["id_str"]+".PNG"
