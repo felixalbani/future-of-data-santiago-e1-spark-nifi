@@ -18,6 +18,8 @@ conda install -y requests
 conda install -y pillow
 conda install -y matplotlib
 
+conda install -y configparser
+
 conda config --append channels conda-forge
 conda install -y -c conda-forge tweepy
 
