@@ -41,15 +41,22 @@ def map_tweet(record):
         source_img, result_image, result_meta = twitter.process_tweet(tweet, yolo)
 
         return (str(tweet["id"]), "twitter", tweet["user"]["screen_name"],
-                tweet["text"], helper.to_bytearray(source_img), helper.to_bytearray(result_image))
+                tweet["text"], helper.to_bytearray(source_img), helper.to_bytearray(result_image), result_meta)
     except:
         print("Unexpected error:", sys.exc_info()[0])
         traceback.print_exc(file=sys.stdout)
 
-    return (None, None, None, None, None, None)
+    return (None, None, None, None, None, None, None)
 
+def map_scores(record):
+    rmeta = record[6]
+    key = record[0]
+    row = []
+    for m in rmeta:
+        row.append((key, m[0],m[1],m[2][0],m[2][1],m[3][0],m[3][1]))
+    return row
 
-def save_to_hbase(result):
+def save_meetup_to_hbase(result):
     if(not result.isEmpty()):
         schema = ['key', 'source', 'user', 'message',
                   'original_image', 'result_image']
@@ -68,6 +75,28 @@ def save_to_hbase(result):
                                }})
         df.write.option("catalog", catalog).option("newtable", "5").format(
             "org.apache.spark.sql.execution.datasources.hbase").save()
+
+def save_meetup_tags_to_hbase(result):
+    if(not result.isEmpty()):
+        schema = ['key', 'class', 'score', 'x1',
+                  'y1', 'x2', 'y2']
+        df = result.toDF(schema)
+        # df.printSchema()
+
+        catalog = json.dumps({"table": {"namespace": "default", "name": "meetup_tags"},
+                              "rowkey": "key",
+                              "columns":
+                              {"key": {"cf": "rowkey", "col": "key", "type": "string"},
+                               "class": {"cf": "cf", "col": "source", "type": "string"},
+                               "score": {"cf": "cf", "col": "user", "type": "float"},
+                               "x1": {"cf": "cf", "col": "x1", "type": "int"},
+                               "y1": {"cf": "cf", "col": "y1", "type": "int"},
+                               "x2": {"cf": "cf", "col": "x2", "type": "int"},
+                               "y2": {"cf": "cf", "col": "y2", "type": "int"}
+                               }})
+        df.write.option("catalog", catalog).option("newtable", "5").format(
+            "org.apache.spark.sql.execution.datasources.hbase").save()
+
 
 
 if __name__ == "__main__":
@@ -92,7 +121,9 @@ if __name__ == "__main__":
     result = kvs.map(lambda record: map_tweet(record)).filter(
         lambda record: record[0] is not None).cache()
 
-    result.foreachRDD(lambda rdd: save_to_hbase(rdd))
+    scores = result.flatMap(lambda record: map_scores(record)).foreachRDD(lambda rdd: save_meetup_tags_to_hbase(rdd))
+
+    result.filter(lambda r: (r[0],r[1],r[2],r[3],r[4],r[5])).foreachRDD(lambda rdd: save_meetup_to_hbase(rdd))
 
     # create_dir_if_not_exists("result")
     #r_file_name = "result/"+tweet["id_str"]+".PNG"
