@@ -2,7 +2,7 @@
 
 source set-env.sh
 
-conda create --prefix ../conda_virutal_env python=3.6
+conda create -y --prefix ../conda_virutal_env python=3.6
 
 source activate ../conda_virutal_env
 
