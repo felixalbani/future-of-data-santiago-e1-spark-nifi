@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Conda Virutal environment
+conda_virutal_env/
+
+# Keras Yolo 3
+keras-yolo3/
