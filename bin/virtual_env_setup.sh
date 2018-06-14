@@ -2,9 +2,9 @@
 
 source set-env.sh
 
-conda create -y --prefix ../conda_virutal_env python=3.6
+conda create -y --prefix $BASE_DIR/conda_virutal_env python=3.6
 
-source activate ../conda_virutal_env
+source activate $BASE_DIR/conda_virutal_env
 
 echo "Installing dependecies"
 
