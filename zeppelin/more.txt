@@ -1,0 +1,35 @@
+In May 2011, the McKinsey Global Institute labeled big data the next frontier with this prediction: “Big data will become a key basis of competition, underpinning new waves of productivity growth, innovation, and consumer surplus—as long as the right policies and enablers are in place.”
+
+Big data’s arrival ushered in an era of high hopes and higher expectations. Early hype surrounding the technology promised a steady stream of real-time insight that would transform customer experience, marketing pitches, and operational efficiency. So, has the history of big data matched that hype?
+
+Many would say no. A Gartner news release stated that “…through 2017, 60 percent of big data projects will fail to go beyond piloting and experimentation, and will be abandoned.” Does that high abandonment rate mean big data failed to deliver, or are there larger issues at play?
+
+IN BIG DATA, CULTURE AND EXECUTION MATTER
+Gartner’s statement hints where at least one disconnect lies: Many businesses rely on tool and skill acquisition alone to solve big data problems. Most fail to recognize that equally important is fostering a mindset and culture change. Why does this matter? Becoming data-driven is a sea change from how today’s businesses operate. With only historic data to draw from, businesses generally make guesses, rely on gut feelings, and lean on biases to make their decisions. When big data comes into play, decisions must be made on real-time, near-real-time, and predictive data points. You no longer rely on instinct—you have to trust the data instead. It’s a new way of thinking and operating.
+
+That type of wholesale change is not easily enacted, yet savvy businesses see that there’s a payoff. A McKinsey study found that U.S. healthcare and retail, the EU public sector, and manufacturing have captured only 10 to 40 percent of the value that lies in their data. What’s more, it seems a lack of analytic talent, data silos, unsupportive leaders, and failure to prove utility have been the major barriers to the successful execution of big data projects.
+
+If more data than ever is available, then we must ask why so little of its value has been captured.
+
+THE REALITIES OF A BIG DATA TRANSFORMATION
+Note again that the Gartner statement found most big data projects are abandoned during pilot or even experimental phases. Poor project execution may be one reason, but the history of big data shows another disconnect: Big data expectations don’t live up to big data reality. That mismatch leaves organizations to, at best, postpone or, at worst, give up on their big data aspirations. In order to successfully apply big data to your organization, it’s time to debunk your expectations and form a more practical idea of how big data transformation actually occurs.
+
+Expectation: It’s fine if big data remains the province of only one or two departments instead of a company-wide effort.
+
+Big data projects are often driven by internal departments focused on a specific goal. When the project is a success, the department manager may feel satisfied with the results. Unfortunately, that success rarely extends beyond the department or the project. Once the project is complete, the company loses further benefit because it’s not taken to the next level.
+
+For this success to grow, you must take a holistic view of big data, driving momentum from the small successes to even bigger wins. It’s important for all C-suite members to note the results from a smaller project and envision how the departmental benefits could extend to the entire company. It’s this tipping point that drives big data transformation.
+
+Expectation: Our internal resources will be sufficient to make our big data projects successful.
+
+The biggest challenge most businesses face with their big data initiatives is the ability to scale and drive transformation internally. Few can manage and maintain this scale and transformation on their own. As with so many other technology transformations, skill sets end up being the number one issue across the board. No matter the scenario or use case, most staff lack the big data skills to master these tasks on their own, and it’s difficult to focus on core business strategy while also preparing your staff to master an entirely new skill set.
+
+The reality is that your team may be able to manage small projects. But if your goal is to become a data-driven organization, you’ll need to expand your team’s capabilities. That may come through intensive education or even outsourcing some of your larger projects to an advanced analytics team with deep expertise in big data.
+
+Expectation: With the right tools, we’ll easily extract value from our big data.
+
+If tools alone were the answer to deriving value from data, then failure wouldn’t be an issue. After all, we have more tools than ever to extract value from data. But the truth is that data core competency must move beyond a tool-based or IT-based focus, because the greatest obstacle to realizing big data success is a cultural issue. Businesses cannot simply give lip service to being a data-driven company; this type of commitment must be backed by strategic and operational goals. In order to ensure follow-through, C-suite and business leaders must take an active role to champion big data initiatives and remain committed to their success.
+
+The 2011 McKinsey Global Institute statement about big data was correct: It is the frontier. It will be what drives competition and innovation. The history of big data is still being written, but its success will depend on separating hype from reality.
+
+Find out how Forrester ranked today’s main players in the big data landscape to determine who can help guide you on your data journey.
