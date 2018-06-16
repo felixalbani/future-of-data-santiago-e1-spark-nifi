@@ -24,7 +24,7 @@ from yolo import YOLO
 from PIL import Image
 
 # Batch interval default 5 seconds
-BATCH_INTERVAL = 5
+BATCH_INTERVAL = 30
 
 MODEL_DATA_DIR = "model_data"
 FONT_DIR = "font"

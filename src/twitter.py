@@ -14,6 +14,7 @@ def process_tweet(tweet, yolo):
                  tweet["id_str"] + " user: " + tweet["user"]["screen_name"])
 
     # Download image
+    print("Downloading: "+tweet['entities']['media'][0]['media_url'])
     response = requests.get(tweet['entities']['media'][0]['media_url'])
     image = Image.open(io.BytesIO(response.content))
 

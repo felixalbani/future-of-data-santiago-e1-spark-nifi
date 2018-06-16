@@ -40,8 +40,10 @@ cp -rf $BASE_DIR/keras-yolo3/font $DEPLOY_DIR/
 
 
 cd $DEPLOY_DIR
+export HADOOP_CONF_DIR=/etc/spark-hadoop/conf
 
-/usr/hdp/current/spark2-client/bin/spark-submit --master local --deploy-mode client \
+/usr/hdp/current/spark2-client/bin/spark-submit --master yarn --deploy-mode client \
+--executor-memory 4G --driver-memory 1G \
 --packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.2.0,com.hortonworks:shc-core:1.1.1-2.1-s_2.11 \
 --repositories http://repo.hortonworks.com/content/groups/public/ \
 --files /etc/spark2/conf/hbase-site.xml \
