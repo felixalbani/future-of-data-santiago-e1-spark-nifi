@@ -108,3 +108,6 @@ conda_virutal_env/
 
 # Keras Yolo 3
 keras-yolo3/
+
+# Keras Yolo 3
+deploy/
