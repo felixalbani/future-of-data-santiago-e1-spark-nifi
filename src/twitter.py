@@ -32,12 +32,12 @@ def process_tweet(tweet, yolo):
 # Send a reply to status with image
 
 
-def reply_tweet(img_file_name, username, status_id):
+def reply_tweet(img_file_name, username, message, status_id):
     # Twitter requires all requests to use OAuth for authentication
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
     api = tweepy.API(auth)
 
     # Update the authenticated user’s status
-    api.update_with_media(img_file_name, status='@{0}'.format(
-        username), in_reply_to_status_id=status_id)
+    api.update_with_media(img_file_name, status='@{0} {1}'.format(
+        username, message), in_reply_to_status_id=status_id)

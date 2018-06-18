@@ -24,6 +24,7 @@ from yolo import YOLO
 from PIL import Image
 
 # Batch interval default 5 seconds
+STREAM_KAFKA_OFFSET="largest"
 BATCH_INTERVAL = 30
 
 MODEL_DATA_DIR = "model_data"
@@ -54,7 +55,7 @@ def map_scores(record):
     row = []
     i=0
     for m in rmeta:
-        row.append((key+'-'+str(i), key, m[0],m[1],m[2][0],m[2][1],m[3][0],m[3][1]))
+        row.append((key+'-'+str(i), key, m[0],str(m[1]),str(m[2][0]),str(m[2][1]),str(m[3][0]),str(m[3][1])))
         i=i+1
     return row
 
@@ -91,15 +92,37 @@ def save_meetup_tags_to_hbase(result):
                               {"key": {"cf": "rowkey", "col": "key", "type": "string"},
                                "meetup_key": {"cf": "cf", "col": "meetup_key", "type": "string"},
                                "class": {"cf": "cf", "col": "class", "type": "string"},
-                               "score": {"cf": "cf", "col": "score", "type": "float"},
-                               "x1": {"cf": "cf", "col": "x1", "type": "int"},
-                               "y1": {"cf": "cf", "col": "y1", "type": "int"},
-                               "x2": {"cf": "cf", "col": "x2", "type": "int"},
-                               "y2": {"cf": "cf", "col": "y2", "type": "int"}
+                               "score": {"cf": "cf", "col": "score", "type": "string"},
+                               "x1": {"cf": "cf", "col": "x1", "type": "string"},
+                               "y1": {"cf": "cf", "col": "y1", "type": "string"},
+                               "x2": {"cf": "cf", "col": "x2", "type": "string"},
+                               "y2": {"cf": "cf", "col": "y2", "type": "string"}
                                }})
         df.write.option("catalog", catalog).option("newtable", "5").format(
             "org.apache.spark.sql.execution.datasources.hbase").save()
 
+def reply_to_tweet(iter):
+    for record in iter:
+        try:
+            #Dont send replies unles we started from latest offset
+            if STREAM_KAFKA_OFFSET == "largest":
+                tid = r[0]
+                user = r[2]
+                r_image = record[5]
+                metadata = record[6]
+
+                classes = [meta[0] for meta in metadata]
+                message = "thanks for you tweet! Here is what I (a machine) can see: {}".format(', ').join(classes)
+
+                create_dir_if_not_exists("result")
+                r_file_name = "result/"+tid+".PNG"
+                r_image.save(r_file_name, format='PNG')
+
+                reply_tweet(r_file_name, user, message, tid)
+
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            traceback.print_exc(file=sys.stdout)
 
 
 if __name__ == "__main__":
@@ -117,23 +140,19 @@ if __name__ == "__main__":
 
     ssc = StreamingContext(sparkSession.sparkContext, BATCH_INTERVAL)
 
-    kvs = KafkaUtils.createDirectStream(ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": "smallest"})
-    #kvs = KafkaUtils.createDirectStream(
-    #    ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": "largest"})
+    kvs = KafkaUtils.createDirectStream(ssc, [topic], {"metadata.broker.list": brokers, "auto.offset.reset": STREAM_KAFKA_OFFSET})
 
     result = kvs.map(lambda record: map_tweet(record)).filter(
         lambda record: record[0] is not None).cache()
 
-    scores = result.flatMap(lambda record: map_scores(record)).foreachRDD(lambda rdd: save_meetup_tags_to_hbase(rdd))
+    #Send twitter reply
+    result.foreachRDD(lambda rdd: rdd.foreachPartition(process_tweet))
 
+    #Save meetup_tags data to hdfs
+    result.flatMap(lambda record: map_scores(record)).foreachRDD(lambda rdd: save_meetup_tags_to_hbase(rdd))
+
+    #Save meetup data to hdfs
     result.map(lambda r: (r[0],r[1],r[2],r[3],r[4],r[5])).foreachRDD(lambda rdd: save_meetup_to_hbase(rdd))
-
-    # create_dir_if_not_exists("result")
-    #r_file_name = "result/"+tweet["id_str"]+".PNG"
-    # r_image.save(r_file_name,format='PNG')
-    # tweet_image(r_file_name,tweet["user"]["screen_name"],tweet["id"])
-
-    #kvs.foreachRDD(lambda rdd: rdd.foreachPartition(process_tweet))
 
     ssc.start()
     ssc.awaitTermination()
