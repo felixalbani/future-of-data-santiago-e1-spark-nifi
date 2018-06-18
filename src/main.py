@@ -118,7 +118,7 @@ def reply_to_tweet(iter):
                 r_file_name = "result/"+tid+".PNG"
                 r_image.save(r_file_name, format='PNG')
 
-                reply_tweet(r_file_name, user, message, tid)
+                twitter.reply_tweet(r_file_name, user, message, tid)
 
         except:
             print("Unexpected error:", sys.exc_info()[0])
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         lambda record: record[0] is not None).cache()
 
     #Send twitter reply
-    result.foreachRDD(lambda rdd: rdd.foreachPartition(process_tweet))
+    result.foreachRDD(lambda rdd: rdd.foreachPartition(reply_to_tweet))
 
     #Save meetup_tags data to hdfs
     result.flatMap(lambda record: map_scores(record)).foreachRDD(lambda rdd: save_meetup_tags_to_hbase(rdd))
